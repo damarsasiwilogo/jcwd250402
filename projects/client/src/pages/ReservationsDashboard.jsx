@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import api from "../api";
-import usePropertyDeleteModal from "../components/hooks/usePropertyDeleteModal.js";
-import { Menu, Button, Text, rem } from "@mantine/core";
 import { IoPeople } from "react-icons/io5";
 import { CiImageOn } from "react-icons/ci";
+import { CiCircleCheck, CiCircleRemove } from "react-icons/ci";
+import { useSelector, useDispatch } from "react-redux";
+import useProofImageModal from "../components/hooks/useProofImageModal";
 
 const PropertiesDashboard = () => {
   const [bookingData, setBookingData] = useState([]);
-  const propertyDeleteModal = usePropertyDeleteModal();
+  const navigate = useNavigate();
+  const proofImageModal = useProofImageModal();
 
   const fetchPropertiesData = async () => {
     try {
@@ -19,6 +22,7 @@ const PropertiesDashboard = () => {
         },
       });
       const data = await response.data.booking;
+      console.log(data);
 
       if (response.status === 200) {
         setBookingData(data);
@@ -53,14 +57,56 @@ const PropertiesDashboard = () => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
-      minimumFractionDigits: 0, // Set minimumFractionDigits to 0 to exclude decimal values
+      minimumFractionDigits: 0,
     }).format(price);
+  };
+
+  const token = useSelector((state) => state.auth.token);
+
+  const rejectHandler = async (id) => {
+    try {
+      const response = await api.patch(
+        `/booking/reject/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Booking rejected");
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const acceptHandler = async (id) => {
+    try {
+      const response = await api.patch(
+        `/booking/accept/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Booking Accepted");
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
 
   return (
     <div className="">
       <div className="flex justify-between mb-8">
-        <h1 className="text-3xl font-normal ">Reservations</h1>
+        <h1 className="ml-2 text-3xl font-normal ">Reservations</h1>
       </div>
       <table className="w-full ">
         <thead>
@@ -80,8 +126,23 @@ const PropertiesDashboard = () => {
         </thead>
         <tbody>
           {bookingData.map((booking) => (
-            <tr key={booking.id} className="border-b">
-              <td className="items-center justify-center px-4 py-2 border-gray-200">
+            <tr key={booking.id} className="border-b hover:bg-primary/10">
+              {/* BOOKING STATUS */}
+              <td className="flex flex-row items-start justify-start px-4 py-2 border-gray-200">
+                <div>
+                  <span
+                    className={`px-[10px] py-[1px] rounded-full 
+                    ${booking.status === "pending payment" && "bg-blue-100"}
+                    ${
+                      booking.status === "pending confirmation" && "bg-blue-100"
+                    }
+                    ${booking.status === "rejected" && "bg-red-500"}
+                    ${booking.status === "cancelled" && "bg-red-500"}
+                    ${booking.status === "confirmed" && "bg-primary"}
+                    ${booking.status === "completed" && "bg-primary"}
+                    `}
+                  ></span>
+                </div>
                 <div
                   className="flex items-start justify-start ml-2 gap-x-4"
                   style={{ textTransform: "capitalize" }}
@@ -89,31 +150,74 @@ const PropertiesDashboard = () => {
                   {booking.status}
                 </div>
               </td>
+              {/* RENTER NAME */}
               <td className="items-center justify-center px-4 py-2 border-gray-200 ">
                 {booking.renter.fullname}
               </td>
+              {/* GUEST COUNT */}
               <td className="items-center justify-center px-4 py-2 border-gray-200 ">
                 {booking.guestCount}
               </td>
+              {/* RESERVED DATE */}
               <td className="items-center justify-center px-4 py-2 border-gray-200 ">
                 {formateDate(booking.createdAt)}
               </td>
-              <td className="items-center justify-center px-4 py-2 border-gray-200 ">
+              {/* PROPERTY NAME */}
+              <td
+                onClick={() => navigate(`/property/${booking.property.id}`)}
+                className="items-center justify-center px-4 py-2 border-gray-200 cursor-pointer hover:text-primary"
+              >
                 {booking.property.propertyName}
               </td>
+              {/* STAY DATE */}
               <td className="items-center justify-center px-4 py-2 border-gray-200 ">
                 {formatDateShort(booking.startDate)} -{" "}
                 {formatDateShort(booking.endDate)}
               </td>
+              {/* TOTAL PRICE */}
               <td className="items-center justify-center px-4 py-2 border-gray-200 ">
                 {priceFormatter(booking.totalPrice)}
               </td>
+              {/* PROOF OF PAYMENT */}
               <td className="items-center justify-center px-4 py-2 border-gray-200 hover:text-primary hover:cursor-pointer">
-                <CiImageOn size={32} />
+                {booking.payment && booking.payment.paymentProof && (
+                  <button
+                    onClick={() => {
+                      proofImageModal.setImageUrl(booking.payment.paymentProof);
+                      proofImageModal.onOpen();
+                    }}
+                  >
+                    <CiImageOn size={32} />
+                  </button>
+                )}
               </td>
-              <td className="flex flex-row items-center justify-center px-4 py-2 border-gray-200">
-                <div className=""></div>
-              </td>
+              {/* ACTIONS */}
+              {booking.status === "pending confirmation" && (
+                <td className="flex flex-row items-center justify-center px-4 py-2 border-gray-200">
+                  <div className="flex gap-2">
+                    <button
+                      disabled={booking.status !== "pending confirmation"}
+                      onClick={() => rejectHandler(booking.id)}
+                      className={`text-red-400 hover:text-red-600 ${
+                        booking.status !== "pending confirmation" &&
+                        "cursor-not-allowed opacity-90"
+                      }`}
+                    >
+                      <CiCircleRemove size={32} />
+                    </button>
+                    <button
+                      disabled={booking.status !== "pending confirmation"}
+                      onClick={() => acceptHandler(booking.id)}
+                      className={`hover:text-primary ${
+                        booking.status !== "pending confirmation" &&
+                        "cursor-not-allowed opacity-90:"
+                      }`}
+                    >
+                      <CiCircleCheck size={32} />
+                    </button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

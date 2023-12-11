@@ -4,6 +4,7 @@ import EmptyState from "../components/EmptyState";
 import { getListings, ListingCard } from "../components/propertyListings";
 import { Skeleton, Card } from "@mantine/core";
 import Container from "../components/Container";
+import { Carousel } from "@mantine/carousel";
 
 export default function Home() {
   document.title = "Nginapp - Elevate your rental experience";
@@ -63,12 +64,23 @@ export default function Home() {
       <main className="flex-1">
         <div className="pb-20 pt-28">
           <Container>
-            <div className="grid grid-cols-1 gap-8 pt-24 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 ">
-              <Skeleton visible={loading}>
-                {propertyListings.map((listing) => (
-                  <ListingCard key={listing.id} data={listing} />
-                ))}
-              </Skeleton>
+            <div className="grid grid-cols-1 gap-8 pt-24 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+              {loading
+                ? Array.from({ length: 12 }).map((_, index) => (
+                    <Card key={index} shadow="sm" padding="lg">
+                      <Skeleton height={200} />
+                      <div className="my-4" />
+                      <Skeleton height={10} />
+                      <div className="my-1" />
+                      <Skeleton height={10} />
+                      <div className="my-1" />
+                      <Skeleton height={10} />
+                      <div className="my-1" />
+                    </Card>
+                  ))
+                : propertyListings.map((listing) => (
+                    <ListingCard key={listing.id} data={listing} />
+                  ))}
             </div>
           </Container>
         </div>

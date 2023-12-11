@@ -11,6 +11,9 @@ import { differenceInCalendarDays, eachDayOfInterval } from "date-fns";
 import Container from "../Container";
 import * as Yup from "yup";
 import { Formik, Form, useFormik } from "formik";
+import getBookedDates from "../../actions/getBookedDates";
+import { format, addDays } from "date-fns";
+import { useSelector } from "react-redux";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -18,31 +21,25 @@ const initialDateRange = {
   key: "selection",
 };
 
-const ListingPage = ({ reservations = [] }) => {
+const ListingPage = () => {
   const { id } = useParams();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const loginModal = useLoginModal();
-  const disabledDates = useMemo(() => {
-    let dates = [];
-    reservations.forEach((reservation) => {
-      const range = eachDayOfInterval({
-        start: new Date(reservation.startDate),
-        end: new Date(reservation.endDate),
-      });
-      dates = [...dates, ...range];
-    });
-    return dates;
-  }, [reservations]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [dateRange, setDateRange] = useState(initialDateRange);
   const [guestCount, setGuestCount] = useState(0);
+  const [bookedDates, setBookedDates] = useState([]);
 
   const validationSchema = Yup.object().shape({
     startDate: Yup.date().required("Start date is required"),
     endDate: Yup.date().required("End date is required"),
     guestCount: Yup.number().required("Guest count is required"),
   });
+
+  const disabledDates = useMemo(() => {
+    return bookedDates.map((dateString) => new Date(dateString));
+  }, [bookedDates]);
 
   const formik = useFormik({
     initialValues: {
@@ -66,13 +63,26 @@ const ListingPage = ({ reservations = [] }) => {
         setProperty(propertyData);
         setTotalPrice(propertyData.price);
       } catch (error) {
-        console.log(error.message);
+        toast.error(error.response.data.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchBookedDates = async () => {
+      try {
+        const dates = await getBookedDates(id);
+        setBookedDates(dates.bookedDates);
+      } catch (error) {
+        console.error("Error fetching booked dates:", error);
+      }
+    };
+
+    fetchBookedDates();
   }, [id]);
 
   const onCreateReservation = useCallback(async () => {
@@ -96,7 +106,7 @@ const ListingPage = ({ reservations = [] }) => {
       const response = await api.post("/booking/new", requestData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json", // Specify the content type as JSON
+          "Content-Type": "application/json",
         },
       });
 

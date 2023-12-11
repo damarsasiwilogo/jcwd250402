@@ -1,7 +1,9 @@
 import { Toaster } from "sonner";
 import { Route, Routes } from "react-router-dom";
-import { TenantLogin, Home } from "./pages";
+
 import {
+  TenantLogin,
+  Home,
   TenantDashboard,
   TenantRegisterPage,
   PageNotFound,
@@ -16,11 +18,14 @@ import {
   RedirectRoute,
 } from "./utils/protectedRoute";
 import AuthModal from "./components/Modals/AuthModal";
+import PaymentModal from "./components/Modals/PaymentModal.jsx";
+import ProofImageModal from "./components/Modals/ProofImage.jsx";
 import VerifyUserPage from "./pages/VerifyUserPage";
 import { ListingPage } from "./components/propertyListings";
 import PropertyDelete from "./components/Modals/PropertyDelete";
 import ResetPassword from "./pages/ResetPassword";
 import TenantRegisterModal from "./components/Modals/TenantRegister";
+import "@mantine/carousel/styles.css";
 
 function App() {
   return (
@@ -29,6 +34,8 @@ function App() {
       <TenantRegisterModal />
       <AuthModal />
       <PropertyDelete />
+      <PaymentModal />
+      <ProofImageModal />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/property/:id" element={<ListingPage />} />
@@ -48,11 +55,17 @@ function App() {
         {/* END OF USER NEEDS TO BE AUTHENTICATED */}
 
         {/* PROTECTED TENANT ROUTE */}
-        <Route path="/edit-property/:id" element={<ProtectedTenantRoute />}>
+        <Route
+          path="/tenant/dashboard/edit-property/:id"
+          element={<ProtectedTenantRoute />}
+        >
           <Route index element={<EditProperty />} />
         </Route>
 
-        <Route path="/new-property" element={<ProtectedTenantRoute />}>
+        <Route
+          path="/tenant/dashboard/create-property"
+          element={<ProtectedTenantRoute />}
+        >
           <Route index element={<CreateProperty />} />
         </Route>
 

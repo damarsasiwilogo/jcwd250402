@@ -1,4 +1,5 @@
 import api from "../api";
+import { toast } from "sonner";
 
 export default async function getPropertyData(id) {
   try {
@@ -41,7 +42,7 @@ export default async function getPropertyData(id) {
       };
     }
   } catch (error) {
-    console.log(error.message);
+    toast.error(error.response.data.message);
   } finally {
   }
 }

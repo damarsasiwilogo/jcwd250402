@@ -13,6 +13,38 @@ const loginModalSlice = createSlice({
   },
 });
 
+const paymentModalSlice = createSlice({
+  name: "paymentModal",
+  initialState: { isOpen: false },
+  reducers: {
+    openPaymentModal(state) {
+      state.isOpen = true;
+    },
+    closePaymentModal(state) {
+      state.isOpen = false;
+    },
+    setBookingId(state, action) {
+      state.bookingId = action.payload;
+    },
+  },
+});
+
+const proofImageModalSlice = createSlice({
+  name: "proofImageModal",
+  initialState: { isOpen: false },
+  reducers: {
+    openProofImageModal(state) {
+      state.isOpen = true;
+    },
+    closeProofImageModal(state) {
+      state.isOpen = false;
+    },
+    setImageUrl(state, action) {
+      state.imageUrl = action.payload;
+    },
+  },
+});
+
 const tenantRegisterSlice = createSlice({
   name: "tenantRegister",
   initialState: { isOpen: false },
@@ -73,6 +105,8 @@ const propertyDeleteSlice = createSlice({
 });
 
 export {
+  proofImageModalSlice,
+  paymentModalSlice,
   propertyDeleteSlice,
   loginModalSlice,
   tenantRegisterSlice,

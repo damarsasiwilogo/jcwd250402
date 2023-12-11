@@ -31,6 +31,7 @@ app.use("/api/property", propertyRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/profile-picture", express.static(__dirname + "/public"));
 app.use("/api/property-asset/", express.static(__dirname + "/public"));
+app.use("/api/payment/", express.static(__dirname + "/public"));
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);

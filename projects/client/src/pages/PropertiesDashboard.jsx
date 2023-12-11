@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
 import usePropertyDeleteModal from "../components/hooks/usePropertyDeleteModal.js";
 import { Menu, Button, Text, rem } from "@mantine/core";
@@ -7,6 +7,7 @@ import { Menu, Button, Text, rem } from "@mantine/core";
 const PropertiesDashboard = () => {
   const [propertiesData, setPropertiesData] = useState([]);
   const propertyDeleteModal = usePropertyDeleteModal();
+  const navigate = useNavigate();
 
   const fetchPropertiesData = async () => {
     try {
@@ -52,7 +53,7 @@ const PropertiesDashboard = () => {
         </thead>
         <tbody>
           {propertiesData.map((property) => (
-            <tr key={property.id} className="border-b">
+            <tr key={property.id} className="border-b hover:bg-primary/10">
               <td className="items-center justify-center px-4 py-2 border-gray-200">
                 <div className="flex items-start justify-start ml-2 gap-x-4">
                   <img
@@ -60,7 +61,12 @@ const PropertiesDashboard = () => {
                     src={`http://localhost:8000/api/property-asset/${property.coverImage}`}
                     alt="property"
                   />
-                  {property.name}
+                  <div
+                    onClick={() => navigate(`property/${property.id}`)}
+                    className="cursor-pointer hover:text-primary"
+                  >
+                    {property.name}
+                  </div>
                 </div>
               </td>
               <td className="flex flex-row items-center justify-center px-4 py-2 border-gray-200">

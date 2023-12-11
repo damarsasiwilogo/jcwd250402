@@ -9,7 +9,6 @@ import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./store";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
-import { Loader } from "@mantine/core";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

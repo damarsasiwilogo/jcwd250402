@@ -5,7 +5,7 @@ import "react-date-range/dist/theme/default.css";
 const DatePicker = ({ value, onChange, disabledDates, onSubmit }) => {
   return (
     <DateRange
-      rangeColors={["#262626"]}
+      rangeColors={["#0256EE"]}
       ranges={[value]}
       date={new Date()}
       onChange={onChange}

@@ -24,7 +24,7 @@ const PropertyHeader = ({
         {propertyImages && propertyImages.length > 0 && (
           <div className="w-full md:w-1/2">
             <div className="h-full grid-cols-2 grid-rows-2 gap-2 md:grid">
-              {propertyImages.map((imageObject, index) => (
+              {propertyImages.slice(0, 4).map((imageObject, index) => (
                 <img
                   key={index}
                   src={`http://localhost:8000/api/property-asset/${imageObject.image}`}

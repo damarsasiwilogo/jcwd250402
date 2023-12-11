@@ -35,8 +35,9 @@ const CreateProperty = () => {
     // bathroomCount: yup.number().required("Bathroom count is required"),
     // propertyType: yup.string().required("Property type is required"),
     // district: yup.string().required("District is required"),
-    // city: yup.string().required("City is required"),
-    // province: yup.string().required("Province is required"),
+    // city: yup.object().required("City is required"),
+    // province: yup.object().required("Province is required"),
+    // country: yup.object().required("Country is required"),
     // streetAddress: yup.string().required("Street address is required"),
     // postalCode: yup.number().required("Postal code is required"),
     // propertyAmenities: yup.array().required("Property amenities is required"),
@@ -117,7 +118,7 @@ const CreateProperty = () => {
         }
       } catch (error) {
         setIsSubmitting(false);
-        console.log(error);
+        toast.error(error.response.data.message);
         if (error.status === 400) {
           toast.error(error.message);
         } else {

@@ -1,4 +1,5 @@
 import api from "../api";
+import { toast } from "sonner";
 
 export default async function getBookingData() {
   try {
@@ -13,6 +14,6 @@ export default async function getBookingData() {
       return bookings;
     }
   } catch (error) {
-    console.log(error.message);
+    toast.error(error.response.data.message);
   }
 }

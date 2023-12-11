@@ -32,7 +32,6 @@ const BookingsPage = () => {
     );
   }
 
-  // console.log(bookings);
   return (
     <div className="flex flex-col min-h-screen">
       <header>

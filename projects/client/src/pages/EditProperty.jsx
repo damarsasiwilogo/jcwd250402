@@ -119,7 +119,7 @@ const EditProperty = () => {
         }
       } catch (error) {
         setIsSubmitting(false);
-        console.log(error);
+        toast.error(error.response.data.message);
         if (error.status === 400) {
           toast.error(error.message);
         } else {

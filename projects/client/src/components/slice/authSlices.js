@@ -21,9 +21,11 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.isTenant = false;
       state.token = null;
+      state.userId = null;
       window.localStorage.removeItem("token");
       window.localStorage.removeItem("isLoggedIn");
       window.localStorage.removeItem("isTenant");
+      window.localStorage.removeItem("userId");
     },
     tenantLogin(state, action) {
       state.isTenant = true;

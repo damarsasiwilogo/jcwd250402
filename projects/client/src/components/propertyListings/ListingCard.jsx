@@ -2,15 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteButton from "../FavoriteButton";
 
-const ListingCard = ({
-  data,
-  reservation,
-  onAction,
-  disabled,
-  actionLabel,
-  actionId,
-  location,
-}) => {
+const ListingCard = ({ data }) => {
   const navigate = useNavigate();
 
   if (!data) {

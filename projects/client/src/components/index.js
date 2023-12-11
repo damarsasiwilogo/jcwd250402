@@ -9,6 +9,8 @@ import Container from "./Container";
 import Heading from "./Heading";
 import Button from "./Button";
 import ListingCard from "./propertyListings/ListingCard";
+import ImageUploader from "./CreateProperty/ImageUploader.jsx";
+import ImageUpload from "./ImageUpload.jsx";
 
 export {
   Navbar,
@@ -23,4 +25,6 @@ export {
   Container,
   Button,
   ListingCard,
+  ImageUploader,
+  ImageUpload,
 };

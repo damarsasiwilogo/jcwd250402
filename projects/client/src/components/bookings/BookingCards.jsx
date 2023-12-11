@@ -1,12 +1,12 @@
 import { toast } from "sonner";
 import api from "../../api";
-import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteButton from "../FavoriteButton";
 import { format } from "date-fns";
 
 import { Button } from "../";
 import { useSelector } from "react-redux";
+import usePaymentModal from "../hooks/usePaymentModal";
 
 const BookingCards = ({
   bookingData,
@@ -17,6 +17,7 @@ const BookingCards = ({
 }) => {
   const navigate = useNavigate();
   const token = useSelector((state) => state.auth.token);
+  const paymentModal = usePaymentModal();
 
   const onCancelBooking = async (e) => {
     e.stopPropagation();
@@ -118,18 +119,26 @@ const BookingCards = ({
         </div>
 
         <div className="flex flex-row gap-1">
-          <Button
-            disabled={disabled}
-            small
-            label="Upload Payment"
-            onClick={() => {}}
-          />
-          <Button
-            disabled={disabled}
-            small
-            label="Cancel Booking"
-            onClick={onCancelBooking}
-          />
+          {bookingData.status === "pending payment" && (
+            <>
+              <Button
+                disabled={disabled}
+                small
+                label="Upload Payment"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  paymentModal.setBookingId(bookingData.id);
+                  paymentModal.onOpen();
+                }}
+              />
+              <Button
+                disabled={disabled}
+                small
+                label="Cancel Booking"
+                onClick={onCancelBooking}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

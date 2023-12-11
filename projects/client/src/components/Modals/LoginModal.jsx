@@ -81,7 +81,6 @@ const LoginModal = () => {
         const userData = response.data;
         const token = userData.token;
         const role = userData.role;
-        console.log(userData);
 
         if (role === "tenant") {
           dispatch(tenantLogin({ token: token, id: userData.id }));
