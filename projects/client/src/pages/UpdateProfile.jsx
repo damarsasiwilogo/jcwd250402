@@ -53,7 +53,6 @@ export default function UpdateProfile() {
       formData.append("email", values.email);
       formData.append("fullname", values.fullname);
       formData.append("dateofbirth", values.dateofbirth);
-      console.log(formik.values.dateofbirth);
       if (values.profilePicture)
         formData.append("profilePicture", values.profilePicture);
 
@@ -65,7 +64,6 @@ export default function UpdateProfile() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.status);
       if (response.status === 200) {
         toast.info("Profile settings updated!", {
           duration: 700,

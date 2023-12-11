@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { Field } from "formik";
 import { useDropzone } from "react-dropzone";
 import { RiImageAddLine, RiDeleteBinLine } from "react-icons/ri";
 
@@ -27,19 +26,14 @@ const ImageUploader = ({ images, onUpdateFormData, disabled }) => {
     setImagesState((prevImages) => {
       const updatedImages = [...prevImages];
       updatedImages.splice(index, 1);
+      onUpdateFormData(updatedImages);
       return updatedImages;
     });
-
-    onUpdateFormData(imagesState.filter((_, i) => i !== index));
   };
 
   return (
     <div className="div">
-      <label htmlFor="property_images" className="text-lg font-medium">
-        Upload your property images
-      </label>
-
-      <div className="flex flex-col w-full mt-2 border-b-2 p-9 justify md:flex-row">
+      <div className="flex flex-col w-full mt-2 p-9 justify md:flex-row">
         <div className="flex mr-5 -mx-2 gap-x-2">
           {Array.isArray(imagesState) &&
             imagesState.length > 0 &&

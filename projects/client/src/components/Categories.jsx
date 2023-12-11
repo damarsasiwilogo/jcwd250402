@@ -1,50 +1,52 @@
 import React from "react";
-import { TbBeach } from "react-icons/tb";
-import { GiWindmill } from "react-icons/gi";
-import { MdOutlineVilla } from "react-icons/md";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { BsHouseDoor } from "react-icons/bs";
+import { PiBuildingsBold, PiWarehouseDuotone } from "react-icons/pi";
+import { GiSpookyHouse } from "react-icons/gi";
+import { MdApartment, MdOutlineBedroomParent } from "react-icons/md";
 import CategoryBox from "./CategoryBox";
+import Container from "./Container";
 
 export const categories = [
   {
-    label: "Beach",
-    icon: TbBeach,
+    label: "House",
+    icon: BsHouseDoor,
     description: "",
   },
   {
-    label: "Windmills",
-    icon: GiWindmill,
+    label: "Apartment",
+    icon: MdApartment,
     description: "",
   },
   {
-    label: "Modern",
-    icon: MdOutlineVilla,
+    label: "Guesthouse",
+    icon: PiWarehouseDuotone,
     description: "",
   },
   {
-    label: "Modern",
-    icon: MdOutlineVilla,
+    label: "Villa",
+    icon: GiSpookyHouse,
     description: "",
   },
   {
-    label: "Modern",
-    icon: MdOutlineVilla,
+    label: "Hotel",
+    icon: PiBuildingsBold,
     description: "",
   },
   {
-    label: "Modern",
-    icon: MdOutlineVilla,
-    description: "",
-  },
-  {
-    label: "Modern",
-    icon: MdOutlineVilla,
+    label: "Room",
+    icon: MdOutlineBedroomParent,
     description: "",
   },
 ];
 
 const Categories = () => {
+  const location = useLocation();
+  const params = useSearchParams();
+  const isMainPage = location.pathname === "/";
+  if (!isMainPage) return null;
   return (
-    <div className="container">
+    <Container>
       <div className="flex flex-row items-center justify-between pt-4 overflow-x-auto">
         {categories.map((category) => (
           <CategoryBox
@@ -55,7 +57,7 @@ const Categories = () => {
           />
         ))}
       </div>
-    </div>
+    </Container>
   );
 };
 

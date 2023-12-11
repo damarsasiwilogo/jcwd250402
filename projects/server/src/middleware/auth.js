@@ -4,19 +4,18 @@ const JWT_SECRET_KEY = "ini_JWT_loh";
 exports.validateToken = (req, res, next) => {
   let token = req.headers.authorization;
   if (!token) {
-    res.status(403).json({
+    res.status(401).json({
       ok: false,
-      message: `Token not found, ${String(err)}`,
+      message: "Token is not found",
     });
     return;
   }
-
   try {
     token = token.split(" ")[1];
     if (!token) {
       res.status(401).json({
         ok: false,
-        message: `Token not found, ${String(err)}`,
+        message: "Token is not found",
       });
       return;
     }
@@ -25,17 +24,17 @@ exports.validateToken = (req, res, next) => {
     if (!payload) {
       res.status(401).json({
         ok: false,
-        message: `Token not found, ${String(err)}`,
+        message: "Failed to get authorization data",
       });
       return;
     }
 
     req.user = payload;
     next();
-  } catch (err) {
-    res.status(403).json({
+  } catch (error) {
+    res.status(401).json({
       ok: false,
-      message: String(err),
+      message: String(error),
     });
   }
 };

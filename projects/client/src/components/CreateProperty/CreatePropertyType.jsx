@@ -1,11 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BsHouseDoor } from "react-icons/bs";
 import { PiBuildingsBold, PiWarehouseDuotone } from "react-icons/pi";
 import { GiSpookyHouse } from "react-icons/gi";
 import { MdApartment, MdOutlineBedroomParent } from "react-icons/md";
 
-const CreatePropertyType = ({ value, setValue, disabled }) => {
+const CreatePropertyType = ({ value, setValue, disabled, selectedValue }) => {
   const [activeIndex, setActiveIndex] = useState(null);
+
+  useEffect(() => {
+    // Set the active index based on the selected value
+    const index = [
+      "house",
+      "apartment",
+      "guesthouse",
+      "villa",
+      "hotel",
+      "room",
+    ].indexOf(selectedValue);
+    setActiveIndex(index);
+  }, [selectedValue]);
 
   const activeHandler = (index, propertyType) => {
     setActiveIndex(index);
@@ -15,7 +28,7 @@ const CreatePropertyType = ({ value, setValue, disabled }) => {
   return (
     <div className="flex flex-col mt-4 border-b p-9 gap-y-3">
       <label htmlFor="property_type" className="text-lg font-medium">
-        Which of these categories best describe your property
+        Which of these categories best describe your property?
       </label>
       <div className="grid items-center justify-start md:w-[70%] grid-cols-2 md:grid md:grid-cols-6 gap-5 md:grid-rows-1">
         {[

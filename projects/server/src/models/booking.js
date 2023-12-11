@@ -8,17 +8,43 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Booking.hasMany(models.Property, {
+      Booking.belongsTo(models.User, {
+        foreignKey: "renterId",
+        as: "renter",
+      });
+      Booking.belongsTo(models.User, {
+        foreignKey: "tenantId",
+        as: "tenant",
+      });
+      Booking.belongsTo(models.Property, {
         foreignKey: "propertyId",
-        as: "properties",
+        as: "property",
+      });
+      Booking.hasOne(models.Payment, {
+        foreignKey: "bookingId",
+        as: "payment",
       });
     }
   }
   Booking.init(
     {
-      status: DataTypes.STRING,
+      renterId: DataTypes.INTEGER,
+      tenantId: DataTypes.INTEGER,
+      propertyId: DataTypes.INTEGER,
       startDate: DataTypes.DATE,
       endDate: DataTypes.DATE,
+      guestCount: DataTypes.INTEGER,
+      totalPrice: DataTypes.INTEGER,
+      status: DataTypes.ENUM(
+        "pending payment",
+        "pending confirmation",
+        "cancelled",
+        "paid",
+        "confirmed",
+        "checked in",
+        "checked out",
+        "completed"
+      ),
     },
     {
       sequelize,

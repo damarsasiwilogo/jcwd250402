@@ -9,10 +9,12 @@ import { PiWarehouseDuotone } from "react-icons/pi";
 import { BsFlag } from "react-icons/bs";
 import { AiOutlineCalendar } from "react-icons/ai";
 import { MdStarHalf } from "react-icons/md";
+import CreateProperty from "./CreateProperty";
+import ReservationDashboard from "./ReservationsDashboard";
 
-const TenantDashboard = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+const TenantDashboard = ({ activeMenu }) => {
   const [activeMenuItem, setActiveMenuItem] = useState("Dashboard");
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
@@ -80,13 +82,15 @@ const TenantDashboard = () => {
       <div
         className={` ${
           isExpanded
-            ? "w-full lg:ml-[350px] p-4 z-0 overlay"
+            ? "w-full lg:ml-[290px] p-4 z-0 overlay"
             : "w-full ml-32 lg:ml-[110px] p-4"
         } relative`}
       >
         {activeMenuItem === "editProfile" ? <UpdateProfile /> : null}
         {activeMenuItem === "Dashboard" ? <Dashboard /> : null}
         {activeMenuItem === "Properties" ? <PropertiesDashboard /> : null}
+        {activeMenuItem === "CreateProperty" ? <CreateProperty /> : null}
+        {activeMenuItem === "Reservations" ? <ReservationDashboard /> : null}
       </div>
     </div>
   );

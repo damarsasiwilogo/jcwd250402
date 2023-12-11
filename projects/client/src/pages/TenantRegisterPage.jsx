@@ -4,8 +4,10 @@ import moment from "moment";
 import { UploadPhoto } from "../components";
 import "react-datepicker/dist/react-datepicker.css";
 import Input from "../components/inputs/Input";
-import { Formik, Form } from "formik";
+import { toast } from "sonner";
+import { Formik, Form, useFormik } from "formik";
 import logo from "../asset/Logo-Black.svg";
+import * as Yup from "yup";
 
 // not yet functional
 const TenantRegisterPage = () => {
@@ -22,6 +24,50 @@ const TenantRegisterPage = () => {
     profilePicture: null,
   });
 
+  const validationSchema = Yup.object({
+    fullname: Yup.string().required("Full Name is required"),
+    email: Yup.string()
+      .email("Email is not valid")
+      .required("Email is required"),
+    phoneNumber: Yup.string().required("Phone Number is required"),
+    username: Yup.string().required("Username is required"),
+    password: Yup.string().required("Password is required"),
+    gender: Yup.string()
+      .required("Gender is required")
+      .oneOf(["male", "female", "other"], "Invalid gender selection"),
+    dateofbirth: Yup.date()
+      .required("Date of birth is required")
+      .test("is-adult", "You must be at least 18 years old", (value) => {
+        return (
+          moment().diff(moment(value), "years") >= 18 ||
+          toast.error("You must be at least 18 years old")
+        );
+      }),
+    profilePicture: Yup.mixed()
+      .required("Profile Picture is required")
+      .test("fileSize", "File is too large", (value) => {
+        return !value || (value && value.size <= 1024 * 1024);
+      })
+      .test("fileType", "Invalid file type", (value) => {
+        return (
+          !value ||
+          (value &&
+            ["image/gif", "image/png", "image/jpeg"].includes(value.type))
+        );
+      }),
+  });
+
+  const initialValues = {
+    fullname: "",
+    email: "",
+    phoneNumber: "",
+    username: "",
+    password: "",
+    gender: "",
+    dateofbirth: "",
+    profilePicture: null,
+  };
+
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
@@ -34,7 +80,20 @@ const TenantRegisterPage = () => {
 
   const handleNext = () => {
     //tambah validasi sebelum lanjut ke step berikutnya
+    // validationSchema
+    //   .validate(values, { abortEarly: false }) // Validate all fields, not just one
+    //   .then(() => {
+    //     // If validation passes, proceed to next step
+    //   })
     nextStep();
+    // .catch((errors) => {
+    //   // If validation fails, set errors to display
+    //   const formErrors = {};
+    //   errors.inner.forEach((error) => {
+    //     formErrors[error.path] = error.message;
+    //   });
+    //   setErrors(formErrors);
+    // });
   };
 
   const handlePrev = () => {
@@ -43,7 +102,6 @@ const TenantRegisterPage = () => {
 
   const handleSubmit = () => {
     // Add submit logic here
-    console.log("Form submitted:", formData);
   };
 
   const handleFileChange = (files) => {
@@ -55,6 +113,11 @@ const TenantRegisterPage = () => {
       profilePicture,
     }));
   };
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: validationSchema,
+    // onSubmit,
+  });
 
   const progressPercentage = ((step - 1) / 3) * 100;
 
@@ -72,7 +135,10 @@ const TenantRegisterPage = () => {
         <img src={logo} alt="logo" width={220} height={220} />
       </div>
       <div className="flex flex-col items-center justify-center h-max">
-        <Formik>
+        <Formik
+          initialValues={formik.initialValues}
+          validationSchema={formik.validationSchema}
+          onSubmit={formik.handleSubmit}>
           <Form className="flex flex-col h-[40vh] w-[40vw] md:mt-[120px] p-12 ">
             {step === 1 && (
               <>
@@ -172,10 +238,19 @@ const TenantRegisterPage = () => {
                       </option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
-                      <option value="other">Rather not say</option>
+                      <option value="other">Rather not to say</option>
                     </select>
                   </div>
-                  <UploadPhoto label={"Profile Picture"} />
+                  <UploadPhoto
+                    id="profilePicture"
+                    name="profilePicture"
+                    label="Profile Picture"
+                    formik={formik}
+                    field="profilePicture"
+                    onChange={(value) => {
+                      formik.setFieldValue("profilePicture", value);
+                    }}
+                  />
                 </div>
               </>
             )}

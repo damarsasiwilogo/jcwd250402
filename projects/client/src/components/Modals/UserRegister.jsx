@@ -103,7 +103,8 @@ const UseRegisterModal = () => {
       <Formik
         initialValues={formik.initialValues}
         validationSchema={registerSchema}
-        onSubmit={formik.handleSubmit}>
+        onSubmit={formik.handleSubmit}
+      >
         {() => (
           <Form>
             <Input
@@ -149,7 +150,8 @@ const UseRegisterModal = () => {
       <div className="flex flex-col items-start">
         <button
           onClick={loginButton}
-          className="text-xs text-neutral-500 hover:text-black">
+          className="text-xs text-neutral-500 hover:text-black"
+        >
           <span>Have an account? Sign In</span>
         </button>
         <button
@@ -157,7 +159,8 @@ const UseRegisterModal = () => {
             navigate("/tenant/register");
             UseRegisterModal.onClose();
           }}
-          className="text-xs text-neutral-500 hover:text-black">
+          className="text-xs text-neutral-500 hover:text-black"
+        >
           <span>Become a Host? Sign Up here</span>
         </button>
       </div>

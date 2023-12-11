@@ -14,6 +14,7 @@ const Input = ({
   className,
   placeholder,
   onKeyDown,
+  propValue,
 }) => {
   const [value, setValue] = useState(""); // State to manage the input value
 

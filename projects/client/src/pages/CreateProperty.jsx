@@ -9,12 +9,40 @@ import {
   CreatePropertyType,
 } from "../components/CreateProperty";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
+import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { Loader } from "@mantine/core";
+import {
+  CountrySelect,
+  ProvinceSelect,
+  CitySelect,
+} from "../components/inputs";
 
 const CreateProperty = () => {
   document.title = "Create New Property";
+  const navigate = useNavigate();
   const [images] = useState([]);
   const [showRules, setShowRules] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validationSchema = yup.object({
+    // propertyName: yup.string().required("Property name is required"),
+    // description: yup.string().required("Description is required"),
+    // price: yup.number().required("Price is required"),
+    // bedCount: yup.number().required("Bed count is required"),
+    // bedroomCount: yup.number().required("Bedroom count is required"),
+    // maxGuestCount: yup.number().required("Max guest count is required"),
+    // bathroomCount: yup.number().required("Bathroom count is required"),
+    // propertyType: yup.string().required("Property type is required"),
+    // district: yup.string().required("District is required"),
+    // city: yup.string().required("City is required"),
+    // province: yup.string().required("Province is required"),
+    // streetAddress: yup.string().required("Street address is required"),
+    // postalCode: yup.number().required("Postal code is required"),
+    // propertyAmenities: yup.array().required("Property amenities is required"),
+    // propertyRules: yup.array().required("Property rules is required"),
+    // images: yup.array().required("Images are required"),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -29,15 +57,18 @@ const CreateProperty = () => {
       district: "",
       city: "",
       province: "",
+      country: "",
       streetAddress: "",
+      latitude: 0,
+      longitude: 0,
       postalCode: 0,
       propertyAmenities: [],
       propertyRules: [],
       images: [[]],
     },
+    validationSchema: validationSchema,
 
     onSubmit: async () => {
-      setIsSubmitting(true);
       const token = localStorage.getItem("token");
       const isTenant = localStorage.getItem("isTenant");
       if (isTenant === "false" || isTenant === "null") {
@@ -54,9 +85,12 @@ const CreateProperty = () => {
       formData.append("bathroomCount", formik.values.bathroomCount);
       formData.append("propertyType", formik.values.propertyType);
       formData.append("district", formik.values.district);
-      formData.append("city", formik.values.city);
-      formData.append("province", formik.values.province);
+      formData.append("city", formik.values.city.label);
+      formData.append("province", formik.values.province.label);
+      formData.append("country", formik.values.country.label);
       formData.append("streetAddress", formik.values.streetAddress);
+      formData.append("latitude", formik.values.country.latitude);
+      formData.append("longitude", formik.values.country.longitude);
       formData.append("postalCode", formik.values.postalCode);
       formik.values.propertyAmenities.forEach((amenity, index) => {
         formData.append(`propertyAmenities[${index}]`, amenity);
@@ -67,9 +101,6 @@ const CreateProperty = () => {
       formik.values.images.forEach((image) => {
         formData.append(`images`, image);
       });
-      for (const entry of formData.entries()) {
-        console.log(`${entry[0]}: ${entry[1]}`);
-      }
       try {
         const response = await api.post("/property/create", formData, {
           headers: {
@@ -77,9 +108,12 @@ const CreateProperty = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        setIsSubmitting(true);
         if (response.status === 201) {
+          setIsSubmitting(false);
           toast.success("Property created successfully");
           setIsSubmitting(false);
+          navigate("/tenant/dashboard");
         }
       } catch (error) {
         setIsSubmitting(false);
@@ -94,6 +128,14 @@ const CreateProperty = () => {
       }
     },
   });
+
+  if (isSubmitting) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader size={50} />
+      </div>
+    );
+  }
 
   const handleInputChange = (field, value) => {
     if (field === "images") {
@@ -115,12 +157,10 @@ const CreateProperty = () => {
   };
 
   const handleIncrement = (property) => {
-    console.log("Incrementing:", property, formik.values[property]);
     formik.setFieldValue(property, formik.values[property] + 1);
   };
 
   const handleDecrement = (property) => {
-    console.log("Decrementing:", property, formik.values[property]);
     formik.setFieldValue(property, Math.max(formik.values[property] - 1, 0));
   };
 
@@ -147,6 +187,11 @@ const CreateProperty = () => {
                 onChange={formik.handleChange}
                 disabled={isSubmitting}
               />
+              {formik.touched.propertyName && formik.errors.propertyName ? (
+                <div className="text-sm text-red-600">
+                  {formik.errors.propertyName}
+                </div>
+              ) : null}
             </div>
             {/* PROPERTY TYPE */}
             <div>
@@ -155,6 +200,11 @@ const CreateProperty = () => {
                 setValue={formik.handleChange}
                 disabled={isSubmitting}
               />
+              {formik.touched.propertyType && formik.errors.propertyType ? (
+                <div className="text-sm text-red-600">
+                  {formik.errors.propertyType}
+                </div>
+              ) : null}
             </div>
             {/* PROPERTY LOCATION */}
             <div className="mb-4 border-b p-9">
@@ -165,31 +215,57 @@ const CreateProperty = () => {
                 Where is your property located?
               </label>
               <div className="flex flex-col w-full p-9 gap-x-3 gap-y-3">
-                <div className="flex flex-col md:flex-row gap-x-4 gap-y-3">
-                  <Input
-                    id="district"
-                    name="district"
-                    label="District"
-                    type="text"
-                    disabled={isSubmitting}
-                    onChange={(value) => handleInputChange("district", value)}
+                <div className="flex flex-col gap-x-4 gap-y-3">
+                  <label
+                    htmlFor="property_location"
+                    className="text-xl font-medium"
+                  >
+                    Country
+                  </label>
+                  <CountrySelect
+                    value={formik.values.country}
+                    onChange={(selectedCountry) =>
+                      formik.setFieldValue("country", selectedCountry)
+                    }
                   />
-                  <Input
-                    id="city"
-                    name="city"
-                    label="City"
-                    type="text"
-                    disabled={isSubmitting}
-                    onChange={(value) => handleInputChange("city", value)}
+
+                  <label
+                    htmlFor="property_location"
+                    className="text-xl font-medium"
+                  >
+                    Province
+                  </label>
+                  <ProvinceSelect
+                    value={formik.values.province}
+                    onChange={(selectedProvince) =>
+                      formik.setFieldValue("province", selectedProvince)
+                    }
+                    countryIsoCode={formik.values.country.value}
                   />
-                  <Input
-                    id="province"
-                    name="province"
-                    label="Province"
-                    type="text"
-                    disabled={isSubmitting}
-                    onChange={(value) => handleInputChange("province", value)}
+                  {formik.touched.province && formik.errors.province ? (
+                    <div className="text-sm text-red-600">
+                      {formik.errors.province}
+                    </div>
+                  ) : null}
+                  <label
+                    htmlFor="property_location"
+                    className="text-xl font-medium"
+                  >
+                    City
+                  </label>
+                  <CitySelect
+                    value={formik.values.city}
+                    onChange={(selectedCity) =>
+                      formik.setFieldValue("city", selectedCity)
+                    }
+                    countryIsoCode={formik.values.country.value}
+                    provinceIsoCode={formik.values.province.value}
                   />
+                  {formik.touched.city && formik.errors.city ? (
+                    <div className="text-sm text-red-600">
+                      {formik.errors.city}
+                    </div>
+                  ) : null}
                 </div>
                 <div className="flex flex-col gap-x-4 w-[100%] gap-y-3 md:flex-row">
                   <Input
@@ -202,6 +278,12 @@ const CreateProperty = () => {
                       handleInputChange("streetAddress", value)
                     }
                   />
+                  {formik.touched.streetAddress &&
+                  formik.errors.streetAddress ? (
+                    <div className="text-sm text-red-600">
+                      {formik.errors.streetAddress}
+                    </div>
+                  ) : null}
                   <Input
                     name="postalCode"
                     label="Postal Code"
@@ -210,6 +292,11 @@ const CreateProperty = () => {
                     type="number"
                     onChange={(value) => handleInputChange("postalCode", value)}
                   />
+                  {formik.touched.postalCode && formik.errors.postalCode ? (
+                    <div className="text-sm text-red-600">
+                      {formik.errors.postalCode}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -220,6 +307,11 @@ const CreateProperty = () => {
                 disabled={isSubmitting}
                 onUpdateFormData={handleImageUpdate}
               />
+              {formik.touched.images && formik.errors.images ? (
+                <div className="text-sm text-red-600">
+                  {formik.errors.images}
+                </div>
+              ) : null}
             </div>
             {/* PROPERTY COUNT */}
             <div className="p-9">
@@ -314,6 +406,12 @@ const CreateProperty = () => {
                 onUpdateFormData={handleInputChange}
                 onAmenitiesChange={handleAmenitiesChange}
               />
+              {formik.touched.propertyAmenities &&
+              formik.errors.propertyAmenities ? (
+                <div className="text-sm text-red-600">
+                  {formik.errors.propertyAmenities}
+                </div>
+              ) : null}
             </div>
             {/* PROPERTY DESCRIPTION */}
             <div className="flex flex-col border-b-2 p-9">
@@ -328,7 +426,13 @@ const CreateProperty = () => {
                 disabled={isSubmitting}
                 value={formik.values.description}
                 onChange={formik.handleChange}
+                className="w-full p-4 text-xl border border-gray-400 rounded-lg outline-none focus:border-primary focus:ring-2 focus:ring-primary"
               />
+              {formik.touched.description && formik.errors.description ? (
+                <div className="text-sm text-red-600">
+                  {formik.errors.description}
+                </div>
+              ) : null}
             </div>
             {/* PROPERTY RULES */}
             <div className="flex flex-col border-b-2 p-9">
@@ -353,6 +457,11 @@ const CreateProperty = () => {
                   }
                 }}
               />
+              {formik.touched.propertyRules && formik.errors.propertyRules ? (
+                <div className="text-sm text-red-600">
+                  {formik.errors.propertyRules}
+                </div>
+              ) : null}
               {showRules && (
                 <div className="p-3 mt-3 border-2 rounded-md border-neutral-500">
                   <ul className="pl-6 mt-2 list-disc">
@@ -392,9 +501,16 @@ const CreateProperty = () => {
                 type="number"
                 onChange={(value) => handleInputChange("price", value)}
               />
+              {formik.touched.price && formik.errors.price ? (
+                <div className="text-sm text-red-600">
+                  {formik.errors.price}
+                </div>
+              ) : null}
             </div>
             <button
-              className="w-full p-4 text-white rounded-md bg-primary"
+              className={`w-full p-4 text-white rounded-md bg-primary ${
+                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+              }}`}
               type="submit"
             >
               Create new property

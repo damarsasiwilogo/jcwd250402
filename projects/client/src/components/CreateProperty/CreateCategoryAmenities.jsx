@@ -16,6 +16,7 @@ const CreatePropertyAmenities = ({
   onUpdateFormData,
   disabled,
   onAmenitiesChange,
+  selectedAmenities,
 }) => {
   const [selectedValues, setSelectedValues] = useState([]);
   const prevSelectedValues = useRef([]);
@@ -35,12 +36,30 @@ const CreatePropertyAmenities = ({
   };
 
   useEffect(() => {
+    // Set initial selected values based on fetched data
+    if (Array.isArray(selectedAmenities) && selectedAmenities.length > 0) {
+      const initialSelected = selectedAmenities.map(
+        (amenityObj) => amenityObj.amenity
+      );
+      if (!isEqualArrays(initialSelected, selectedValues)) {
+        setSelectedValues(initialSelected);
+      }
+    }
+
     // Use useEffect to handle side effects (calling onAmenitiesChange)
-    if (selectedValues !== prevSelectedValues.current) {
+    const hasChanged =
+      JSON.stringify(selectedValues) !==
+      JSON.stringify(prevSelectedValues.current);
+    if (hasChanged) {
       onAmenitiesChange(selectedValues);
       prevSelectedValues.current = selectedValues;
     }
-  }, [selectedValues, onAmenitiesChange]);
+  }, [selectedValues, onAmenitiesChange, selectedAmenities]);
+
+  // Helper function to check if two arrays are equal
+  function isEqualArrays(arr1, arr2) {
+    return JSON.stringify(arr1) === JSON.stringify(arr2);
+  }
 
   return (
     <div className="">

@@ -8,12 +8,16 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Payment.belongsTo(models.Booking, {
+        foreignKey: "bookingId",
+        as: "booking",
+      });
     }
   }
   Payment.init(
     {
       paymentProof: DataTypes.STRING,
+      bookingId: DataTypes.INTEGER,
       totalPrice: DataTypes.INTEGER,
     },
     {

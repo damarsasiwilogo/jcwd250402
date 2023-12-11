@@ -19,4 +19,6 @@ router.get(
   userController.getUserInfo
 );
 
+router.get("/tenant/:id", userController.getUserInfoById);
+
 module.exports = router;

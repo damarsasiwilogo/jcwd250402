@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useFormik, Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { login, tenantLogin } from "../components/slice/authSlices.js";
 
 import useTenantRegister from "../components/hooks/useTenantRegister.js";
 import logo from "../asset/Logo-White.svg";
@@ -10,8 +12,8 @@ import logo_black from "../asset/Logo-Black.svg";
 import api from "../api.js";
 import Input from "../components/inputs/Input.jsx";
 
-document.title = "Nginapp Host - Login";
-const Tenant = () => {
+const TenantLogin = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isForgot, setIsForgot] = useState(false);
@@ -20,8 +22,6 @@ const Tenant = () => {
     password: "",
     email: "",
   });
-
-  const tenantRegister = useTenantRegister();
 
   const loginSchema = Yup.object().shape({
     user_identity: Yup.string()
@@ -35,7 +35,7 @@ const Tenant = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const login = async (user_identity, password) => {
+  const loginHandler = async (user_identity, password) => {
     try {
       const response = await api.post("/auth/login", {
         user_identity,
@@ -48,10 +48,13 @@ const Tenant = () => {
 
         if (role === "user") {
           toast.error("Sorry this page is for tenants only.");
-          navigate({ pathname: "/", state: { openLoginModal: true } });
+          dispatch(login({ token: token, isLoggedIn: true, isTenant: false }));
+          navigate({ pathname: "/" });
           return;
         } else if (role === "tenant") {
-          localStorage.setItem("token", token);
+          dispatch(
+            tenantLogin({ token: token, isLoggedIn: true, isTenant: true })
+          );
           toast.success("Log in successful! Welcome back!");
           navigate("/tenant/dashboard");
           setIsLoading(false);
@@ -85,7 +88,7 @@ const Tenant = () => {
   const formik = useFormik({
     onSubmit: (values) => {
       const { user_identity, password } = values;
-      login(user_identity, password);
+      loginHandler(user_identity, password);
     },
   });
 
@@ -110,7 +113,7 @@ const Tenant = () => {
       </div>
 
       <div className="flex flex-col items-center justify-center w-full px-6 py-8 mx-auto md:h-screen lg:py-0 z-100">
-        <div className="w-full bg-white rounded-lg shadow-xl dark:border md:mt-0 sm:max-w-md xl:p-0">
+        <div className="w-full bg-white rounded-lg shadow-xl md:mt-0 sm:max-w-md xl:p-0">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <div className="flex flex-row items-center justify-center">
               <h1 class="text-xl font-light leading-tight tracking-tight text-gray-900 md:text-2xl mr-2">
@@ -181,7 +184,7 @@ const Tenant = () => {
                         id="remember"
                         aria-describedby="remember"
                         type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 "
                         required=""
                       />
                     </div>
@@ -215,7 +218,7 @@ const Tenant = () => {
             ) : (
               <button
                 onClick={() => {
-                  login(formData.user_identity, formData.password);
+                  loginHandler(formData.user_identity, formData.password);
                   setIsLoading(true);
                 }}
                 className="w-full text-white bg-primary hover:bg-primary/70 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center "
@@ -224,9 +227,9 @@ const Tenant = () => {
               </button>
             )}
             <div class="flex items-center justify-center mt-4">
-              <span class="w-full border-b dark:border-gray-600 mr-10"></span>
+              <span class="w-full border-b  mr-10"></span>
               <span class="text-md text-center text-gray-500">or</span>
-              <span class="w-full border-b dark:border-gray-400 ml-10"></span>
+              <span class="w-full border-b  ml-10"></span>
             </div>
             <div className="flex items-center justify-center">
               <span className="mr-2">Don't have an account?</span>
@@ -246,4 +249,4 @@ const Tenant = () => {
   );
 };
 
-export default Tenant;
+export default TenantLogin;

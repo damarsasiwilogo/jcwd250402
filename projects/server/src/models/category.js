@@ -24,10 +24,12 @@ module.exports = (sequelize, DataTypes) => {
         "hotel",
         "room"
       ),
-      district: { type: DataTypes.STRING, allowNull: false },
-      city: { type: DataTypes.STRING, allowNull: false },
+      country: { type: DataTypes.STRING, allowNull: false },
       province: { type: DataTypes.STRING, allowNull: false },
+      city: { type: DataTypes.STRING, allowNull: false },
       streetAddress: { type: DataTypes.STRING, allowNull: false },
+      latitude: { type: DataTypes.INTEGER, allowNull: false },
+      longitude: { type: DataTypes.INTEGER, allowNull: false },
       postalCode: { type: DataTypes.INTEGER, allowNull: false },
     },
     {

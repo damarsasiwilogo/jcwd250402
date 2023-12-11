@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Property.belongsTo(models.User, {
         foreignKey: "userId",
+        as: "Tenant",
       });
       Property.hasMany(models.PropertyImage, {
         foreignKey: "propertyId",

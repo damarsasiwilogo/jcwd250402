@@ -12,17 +12,23 @@ module.exports = {
       propertyType: {
         type: Sequelize.ENUM("house", "apartment", "villa", "hotel", "room"),
       },
-      district: {
-        type: Sequelize.STRING,
-      },
-      city: {
+      country: {
         type: Sequelize.STRING,
       },
       province: {
         type: Sequelize.STRING,
       },
+      city: {
+        type: Sequelize.STRING,
+      },
       streetAddress: {
         type: Sequelize.STRING,
+      },
+      latitude: {
+        type: Sequelize.INTEGER,
+      },
+      longitude: {
+        type: Sequelize.INTEGER,
       },
       postalCode: {
         type: Sequelize.INTEGER,

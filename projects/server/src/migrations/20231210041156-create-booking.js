@@ -9,28 +9,38 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      roomId: {
+      renterId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: "rooms",
-          key: "id",
-        },
       },
-      userId: {
+      tenantId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
       },
-      status: {
-        type: Sequelize.STRING,
+      propertyId: {
+        type: Sequelize.INTEGER,
       },
       startDate: {
         type: Sequelize.DATE,
       },
       endDate: {
         type: Sequelize.DATE,
+      },
+      guestCount: {
+        type: Sequelize.INTEGER,
+      },
+      totalPrice: {
+        type: Sequelize.INTEGER,
+      },
+      status: {
+        type: Sequelize.ENUM(
+          "pending payment",
+          "pending confirmation",
+          "cancelled",
+          "paid",
+          "confirmed",
+          "checked in",
+          "checked out",
+          "completed"
+        ),
       },
       createdAt: {
         allowNull: false,

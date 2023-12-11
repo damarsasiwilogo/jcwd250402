@@ -52,7 +52,28 @@ const verifyRegisterUserSlice = createSlice({
   },
 });
 
+const propertyDeleteSlice = createSlice({
+  name: "propertyDelete",
+  initialState: {
+    isOpen: false,
+    propertyId: null,
+  },
+  reducers: {
+    openPropertyDelete(state) {
+      state.isOpen = true;
+    },
+    closePropertyDelete(state) {
+      state.isOpen = false;
+      state.propertyId = null;
+    },
+    setPropertyId(state, action) {
+      state.propertyId = action.payload;
+    },
+  },
+});
+
 export {
+  propertyDeleteSlice,
   loginModalSlice,
   tenantRegisterSlice,
   userRegisterSlice,

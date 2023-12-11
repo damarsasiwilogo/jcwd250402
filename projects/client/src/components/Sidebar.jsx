@@ -4,7 +4,7 @@ import { RiMore2Fill } from "react-icons/ri";
 import logo from "../asset/Logo-Black.svg";
 import api from "../api";
 import { useDispatch } from "react-redux";
-import { isTenantLogout, logout } from "./slice/authSlices";
+import { logout } from "./slice/authSlices";
 
 const SidebarContext = createContext();
 
@@ -59,8 +59,20 @@ export function Sidebar({
     "https://upload.wikimedia.org/wikipedia/commons/9/9f/Pessoa_Neutra.svg";
 
   const profilePictureSrc = profilePicture
-    ? `http://localhost:8000/profile-picture/${profilePicture}`
+    ? `http://localhost:8000/api/profile-picture/${profilePicture}`
     : defaultAvatar;
+
+  // Update isSidebarExpanded based on viewport width
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSidebarExpanded(window.innerWidth >= 640);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <aside className="h-screen">

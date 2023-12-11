@@ -104,3 +104,36 @@ exports.getUserInfo = async (req, res) => {
       .json({ ok: false, message: "Internal server error", error: error });
   }
 };
+
+exports.getUserInfoById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const userInfo = await User.findOne({
+      where: {
+        id: id,
+      },
+      attributes: [
+        "id",
+        "email",
+        "username",
+        "fullname",
+        "dateofbirth",
+        "gender",
+        "phoneNumber",
+        "profilePicture",
+      ],
+    });
+
+    if (!userInfo) {
+      return res.status(404).json({ ok: false, message: "User not found" });
+    }
+
+    res.json({ ok: true, userInfo });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ ok: false, message: "Internal server error", error: error });
+  }
+};

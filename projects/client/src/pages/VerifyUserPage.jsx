@@ -69,7 +69,7 @@ function VerifyUserPage() {
   let message;
   switch (verificationStatus) {
     case "verifying":
-      message = "Verifying your account...";
+      message = "Verify Your Account!";
       break;
     case "verified":
       message = "Account verified successfully!";
