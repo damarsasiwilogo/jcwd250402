@@ -6,8 +6,6 @@ import useProofImageModal from "../hooks/useProofImageModal";
 
 const ProofImageModal = () => {
   const proofImageModal = useProofImageModal();
-  const [isLoading, setIsLoading] = useState(false);
-
   const imageUrl = useSelector((state) => state.proofImageModal.imageUrl);
 
   const bodyContent = (
@@ -21,11 +19,9 @@ const ProofImageModal = () => {
     </div>
   );
 
-  console.log(imageUrl);
   return (
     <>
       <Modal
-        disabled={isLoading}
         isOpen={proofImageModal.isOpen}
         onClose={() => {
           proofImageModal.onClose();

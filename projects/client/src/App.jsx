@@ -11,6 +11,7 @@ import {
   EditProperty,
   BookingsPage,
   ReservationsPage,
+  CreateRoom,
 } from "./pages";
 import {
   ProtectedRoute,
@@ -23,6 +24,7 @@ import ProofImageModal from "./components/Modals/ProofImage.jsx";
 import VerifyUserPage from "./pages/VerifyUserPage";
 import { ListingPage } from "./components/propertyListings";
 import PropertyDelete from "./components/Modals/PropertyDelete";
+import RoomDelete from "./components/Modals/RoomDelete";
 import ResetPassword from "./pages/ResetPassword";
 import TenantRegisterModal from "./components/Modals/TenantRegister";
 import "@mantine/carousel/styles.css";
@@ -36,6 +38,7 @@ function App() {
       <PropertyDelete />
       <PaymentModal />
       <ProofImageModal />
+      <RoomDelete />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/property/:id" element={<ListingPage />} />
@@ -43,6 +46,10 @@ function App() {
         <Route path="/tenant/register" element={<TenantRegisterPage />} />
         <Route path="/edit-property/:id" element={<EditProperty />} />
         <Route path="/verify-email" element={<VerifyUserPage />} />
+        <Route
+          path="/tenant/dashboard/:propertyId/create-room"
+          element={<CreateRoom />}
+        />
 
         {/* USER NEEDS TO BE AUTHENTICATED */}
         <Route path="/bookings" element={<ProtectedRoute />}>

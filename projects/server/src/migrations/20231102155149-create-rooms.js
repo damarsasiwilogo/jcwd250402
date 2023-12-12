@@ -16,14 +16,26 @@ module.exports = {
           key: "id",
         },
       },
-      name: {
+      roomName: {
+        type: Sequelize.STRING,
+      },
+      propertyId: {
+        type: Sequelize.STRING,
+      },
+      userId: {
         type: Sequelize.STRING,
       },
       price: {
         type: Sequelize.INTEGER,
       },
       description: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
+      },
+      maxGuestCount: {
+        type: Sequelize.INTEGER,
+      },
+      bathroomCount: {
+        type: Sequelize.INTEGER,
       },
       totalSale: {
         type: Sequelize.STRING,

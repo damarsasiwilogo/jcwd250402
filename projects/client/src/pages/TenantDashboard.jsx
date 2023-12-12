@@ -8,9 +8,11 @@ import { RxDashboard } from "react-icons/rx";
 import { PiWarehouseDuotone } from "react-icons/pi";
 import { BsFlag } from "react-icons/bs";
 import { AiOutlineCalendar } from "react-icons/ai";
+import { MdOutlineBedroomParent } from "react-icons/md";
 import { MdStarHalf } from "react-icons/md";
 import CreateProperty from "./CreateProperty";
 import ReservationDashboard from "./ReservationsDashboard";
+import RoomsDashboard from "./RoomsDashboard";
 
 const TenantDashboard = ({ activeMenu }) => {
   const [activeMenuItem, setActiveMenuItem] = useState("Dashboard");
@@ -54,6 +56,12 @@ const TenantDashboard = ({ activeMenu }) => {
             active={activeMenuItem === "Properties"}
           />
           <SidebarItem
+            icon={<MdOutlineBedroomParent size={20} />}
+            text="Rooms"
+            onMenuItemClick={handleMenuItemClick}
+            active={activeMenuItem === "Rooms"}
+          />
+          <SidebarItem
             icon={<BsFlag size={20} />}
             text="Reservations"
             onMenuItemClick={handleMenuItemClick}
@@ -91,6 +99,7 @@ const TenantDashboard = ({ activeMenu }) => {
         {activeMenuItem === "Properties" ? <PropertiesDashboard /> : null}
         {activeMenuItem === "CreateProperty" ? <CreateProperty /> : null}
         {activeMenuItem === "Reservations" ? <ReservationDashboard /> : null}
+        {activeMenuItem === "Rooms" ? <RoomsDashboard /> : null}
       </div>
     </div>
   );

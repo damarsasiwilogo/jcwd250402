@@ -10,6 +10,7 @@ import {
   propertyDeleteSlice,
   paymentModalSlice,
   proofImageModalSlice,
+  roomDeleteSlice,
 } from "./components/hooks/modalSlice";
 import authSlice from "./components/slice/authSlices";
 
@@ -26,6 +27,7 @@ const persistConfig = {
     "propertyDelete",
     "paymentModal",
     "proofImageModal",
+    "roomDelete",
   ],
 };
 
@@ -38,6 +40,7 @@ const rootReducer = combineReducers({
   verifyRegisterUser: verifyRegisterUserSlice.reducer,
   proofImageModal: proofImageModalSlice.reducer,
   propertyDelete: propertyDeleteSlice.reducer,
+  roomDelete: roomDeleteSlice.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

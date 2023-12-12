@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { set } from "date-fns";
 
 const loginModalSlice = createSlice({
   name: "loginModal",
@@ -104,7 +105,32 @@ const propertyDeleteSlice = createSlice({
   },
 });
 
+const roomDeleteSlice = createSlice({
+  name: "roomDelete",
+  initialState: {
+    isOpen: false,
+    roomId: null,
+    propertyId: null,
+  },
+  reducers: {
+    openRoomDelete(state) {
+      state.isOpen = true;
+    },
+    closeRoomDelete(state) {
+      state.isOpen = false;
+      state.roomId = null;
+    },
+    setRoomId(state, action) {
+      state.roomId = action.payload;
+    },
+    setPropertyId(state, action) {
+      state.propertyId = action.payload;
+    },
+  },
+});
+
 export {
+  roomDeleteSlice,
   proofImageModalSlice,
   paymentModalSlice,
   propertyDeleteSlice,

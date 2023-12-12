@@ -48,7 +48,7 @@ const PropertyDetail = ({
 
   const formattedDate = new Intl.DateTimeFormat("en", {
     year: "numeric",
-    month: "long", // Use "short" for abbreviated month name
+    month: "long",
   }).format(new Date(tenantMemberSince));
 
   return (
@@ -97,10 +97,12 @@ const PropertyDetail = ({
             <div>Guests</div>
             <div>{guestCount}</div>
           </div>
-          <div className="flex flex-col items-center justify-center px-4 text-center border-r">
-            <div>Rooms</div>
-            <div>{roomCount}</div>
-          </div>
+          {propertyType === "room" ? null : (
+            <div className="flex flex-col items-center justify-center px-4 text-center border-r">
+              <div>Rooms</div>
+              <div>{roomCount}</div>
+            </div>
+          )}
           <div className="flex flex-col items-center justify-center px-4 text-center border-r">
             <div>Beds</div>
             <div>{bedCount}</div>

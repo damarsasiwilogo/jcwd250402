@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "propertyId",
         as: "property",
       });
+      Booking.belongsTo(models.Rooms, {
+        foreignKey: "roomId",
+        as: "room",
+      });
       Booking.hasOne(models.Payment, {
         foreignKey: "bookingId",
         as: "payment",
@@ -28,23 +32,27 @@ module.exports = (sequelize, DataTypes) => {
   }
   Booking.init(
     {
-      renterId: DataTypes.INTEGER,
-      tenantId: DataTypes.INTEGER,
-      propertyId: DataTypes.INTEGER,
-      startDate: DataTypes.DATE,
-      endDate: DataTypes.DATE,
-      guestCount: DataTypes.INTEGER,
-      totalPrice: DataTypes.INTEGER,
-      status: DataTypes.ENUM(
-        "pending payment",
-        "pending confirmation",
-        "cancelled",
-        "paid",
-        "confirmed",
-        "checked in",
-        "checked out",
-        "completed"
-      ),
+      renterId: { type: DataTypes.INTEGER, allowNull: false },
+      tenantId: { type: DataTypes.INTEGER, allowNull: false },
+      propertyId: { type: DataTypes.INTEGER, allowNull: false },
+      roomId: DataTypes.INTEGER,
+      startDate: { type: DataTypes.DATE, allowNull: false },
+      endDate: { type: DataTypes.DATE, allowNull: false },
+      guestCount: { type: DataTypes.INTEGER, allowNull: false },
+      totalPrice: { type: DataTypes.INTEGER, allowNull: false },
+      status: {
+        type: DataTypes.ENUM(
+          "pending payment",
+          "pending confirmation",
+          "cancelled",
+          "paid",
+          "confirmed",
+          "checked in",
+          "checked out",
+          "completed"
+        ),
+        allowNull: false,
+      },
     },
     {
       sequelize,

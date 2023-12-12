@@ -30,7 +30,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  if (propertyListings.length === 0) {
+  if (!propertyListings || propertyListings.length === 0) {
     return (
       <div className="flex flex-col min-h-screen">
         <header>

@@ -42,7 +42,7 @@ const PropertiesDashboard = () => {
           Add New Property
         </Link>
       </div>
-      <table className="w-full ">
+      <table className="w-full ml-4">
         <thead>
           <tr>
             <th className="px-4 py-2 border-gray-200">Name</th>
@@ -54,15 +54,15 @@ const PropertiesDashboard = () => {
         <tbody>
           {propertiesData.map((property) => (
             <tr key={property.id} className="border-b hover:bg-primary/10">
-              <td className="items-center justify-center px-4 py-2 border-gray-200">
-                <div className="flex items-start justify-start ml-2 gap-x-4">
+              <td className="items-center justify-center py-2 border-gray-200">
+                <div className="flex items-center justify-start ml-2 gap-x-4">
                   <img
-                    className="object-fill w-10 h-10 rounded-lg"
+                    className="object-fill rounded-lg w-14 h-14"
                     src={`http://localhost:8000/api/property-asset/${property.coverImage}`}
                     alt="property"
                   />
                   <div
-                    onClick={() => navigate(`property/${property.id}`)}
+                    onClick={() => navigate(`/property/${property.id}`)}
                     className="cursor-pointer hover:text-primary"
                   >
                     {property.name}
@@ -83,8 +83,8 @@ const PropertiesDashboard = () => {
                     )}`
                   : "N/A"}
               </td>
-              <td className="flex flex-row items-center justify-center px-4 py-2 border-gray-200">
-                <div className="">
+              <td className="flex flex-row items-center justify-center px-4 py-3.5 border-gray-200">
+                <div className="items-center">
                   <Menu shadow="md" width={200} color="#0256EE" radius={""}>
                     <Menu.Target>
                       <Button>Manage</Button>

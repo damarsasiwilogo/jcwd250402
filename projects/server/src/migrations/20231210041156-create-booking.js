@@ -18,6 +18,9 @@ module.exports = {
       propertyId: {
         type: Sequelize.INTEGER,
       },
+      roomId: {
+        type: Sequelize.INTEGER,
+      },
       startDate: {
         type: Sequelize.DATE,
       },

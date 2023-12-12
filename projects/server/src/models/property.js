@@ -81,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       coverImage: {
         type: DataTypes.STRING,
-        // allowNull: false,
+        allowNull: false,
       },
       isActive: DataTypes.BOOLEAN,
     },

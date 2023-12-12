@@ -9,9 +9,11 @@ import CreateProperty from "./CreateProperty";
 import EditProperty from "./EditProperty";
 import BookingsPage from "./BookingsPage";
 import ReservationsPage from "./ReservationsPage";
+import CreateRoom from "./CreateRoom";
 
 export {
   ResetPassword,
+  CreateRoom,
   BookingsPage,
   ReservationsPage,
   TenantLogin,

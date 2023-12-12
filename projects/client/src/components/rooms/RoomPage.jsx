@@ -1,20 +1,15 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api";
 import { Navbar, Footer } from "../";
 import { toast } from "sonner";
 import useLoginModal from "../hooks/useLoginModal";
-import { getPropertyData, ListingReservation } from "./";
+import { getPropertyData } from "./";
 import { PropertyHeader, PropertyDetail } from "./property";
 import { Loader } from "@mantine/core";
-import { differenceInCalendarDays, eachDayOfInterval } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 import Container from "../Container";
-import * as Yup from "yup";
-import { Formik, Form, useFormik } from "formik";
 import getBookedDates from "../../actions/getBookedDates";
-import { format, addDays } from "date-fns";
-import { useSelector } from "react-redux";
-import RoomSelect from "../rooms/RoomSelect";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -31,28 +26,6 @@ const ListingPage = () => {
   const [dateRange, setDateRange] = useState(initialDateRange);
   const [guestCount, setGuestCount] = useState(0);
   const [bookedDates, setBookedDates] = useState([]);
-
-  const validationSchema = Yup.object().shape({
-    startDate: Yup.date().required("Start date is required"),
-    endDate: Yup.date().required("End date is required"),
-    guestCount: Yup.number().required("Guest count is required"),
-  });
-
-  const disabledDates = useMemo(() => {
-    return bookedDates.map((dateString) => new Date(dateString));
-  }, [bookedDates]);
-
-  const formik = useFormik({
-    initialValues: {
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-      guestCount: guestCount,
-    },
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      onCreateReservation();
-    },
-  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -200,19 +173,18 @@ const ListingPage = () => {
                 longitude={property.categories.longitude}
               />
               <div className="order-last mb-10 md:order-last md:col-span-3">
-                {/* <RoomSelect /> */}
-                <ListingReservation
-                  price={property.price}
-                  totalPrice={totalPrice}
-                  onChangeDate={(value) => setDateRange(value)}
-                  dateRange={dateRange}
-                  onSubmit={onCreateReservation}
-                  disabled={loading}
-                  maxGuests={property.maxGuestCount}
-                  disabledDates={disabledDates}
-                  guestCount={guestCount}
-                  setGuestCount={setGuestCount}
-                />
+                {/* <ListingReservation
+                      price={property.price}
+                      totalPrice={totalPrice}
+                      onChangeDate={(value) => setDateRange(value)}
+                      dateRange={dateRange}
+                      onSubmit={onCreateReservation}
+                      disabled={loading}
+                      maxGuests={property.maxGuestCount}
+                      disabledDates={disabledDates}
+                      guestCount={guestCount}
+                      setGuestCount={setGuestCount}
+                    /> */}
               </div>
             </div>
           </div>

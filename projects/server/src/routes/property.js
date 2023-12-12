@@ -13,6 +13,13 @@ router.post(
   propertyController.createProperty
 );
 
+router.post(
+  "/:propertyId/room/create",
+  multerUpload.array("images", 5),
+  authMiddleware.validateToken,
+  propertyController.createRoom
+);
+
 // PUT / PATCH
 router.patch(
   "/edit/:id",
@@ -28,6 +35,12 @@ router.delete(
   propertyController.deletePropertyHandler
 );
 
+router.delete(
+  "/:propertyId/room/delete/:roomId",
+  authMiddleware.validateToken,
+  propertyController.deleteRoom
+);
+
 // GET
 router.get("/", propertyController.getAllProperties);
 router.get(
@@ -35,6 +48,14 @@ router.get(
   authMiddleware.validateToken,
   propertyController.getPropertiesByUserId
 );
+
+router.get(
+  "/rooms-data/",
+  authMiddleware.validateToken,
+  propertyController.getAllRoomsAndProperties
+);
+
+router.get("rooms/:id", propertyController.getRoomById);
 router.get("/:id", propertyController.getPropertyById);
 
 module.exports = router;

@@ -1,9 +1,17 @@
-const { Booking, Property, User, Payment } = require("../models");
+const { ro } = require("date-fns/locale");
+const { Booking, Property, User, Payment, Rooms } = require("../models");
 
 exports.createBooking = async (req, res) => {
   const renterId = req.user.id;
-  const { tenantId, propertyId, startDate, endDate, guestCount, totalPrice } =
-    req.body;
+  const {
+    tenantId,
+    propertyId,
+    startDate,
+    endDate,
+    guestCount,
+    totalPrice,
+    roomId,
+  } = req.body;
 
   try {
     if (
@@ -18,31 +26,60 @@ exports.createBooking = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    if (renterId === tenantId) {
-      return res
-        .status(400)
-        .json({ message: "Renter and tenant cannot be the same" });
-    }
-    const booking = await Booking.create(
-      {
-        renterId,
-        tenantId,
-        propertyId,
-        startDate,
-        endDate,
-        guestCount,
-        totalPrice,
-        status: "pending payment",
-      },
-      {
-        include: [{ model: Property, as: "property" }],
-      },
-      {
-        include: [{ model: User, as: "renter" }],
-      }
-    );
+    // if (renterId === tenantId) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Renter and tenant cannot be the same" });
+    // }
 
-    res.status(201).json({ message: "Booking created successfully", booking });
+    if ((roomId !== undefined && roomId !== null) || !roomId) {
+      const booking = await Booking.create(
+        {
+          renterId,
+          roomId,
+          tenantId,
+          propertyId,
+          startDate,
+          endDate,
+          guestCount,
+          totalPrice,
+          status: "pending payment",
+        },
+        {
+          include: [
+            { model: Property, as: "property" },
+            { model: Rooms, as: "room" },
+            { model: User, as: "renter" },
+          ],
+        }
+      );
+      res
+        .status(201)
+        .json({ message: "Booking created successfully", booking });
+    } else {
+      const booking = await Booking.create(
+        {
+          renterId,
+          tenantId,
+          propertyId,
+          startDate,
+          endDate,
+          guestCount,
+          totalPrice,
+          status: "pending payment",
+        },
+        {
+          include: [
+            { model: Property, as: "property" },
+            { model: Rooms, as: "room" },
+            { model: User, as: "renter" },
+          ],
+        }
+      );
+      res
+        .status(201)
+        .json({ message: "Booking created successfully", booking });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -51,18 +88,21 @@ exports.createBooking = async (req, res) => {
 
 exports.getNewBooking = async (req, res) => {
   const tenantId = req.user.id;
+
   try {
-    const booking = await Booking.findAll({
+    const bookings = await Booking.findAll({
       include: [
-        { model: Property, as: "property" },
+        { model: Property, as: "property", attributes: ["id", "propertyName"] },
         { model: User, as: "renter", attributes: ["fullname"] },
         { model: Payment, as: "payment" },
+        { model: Rooms, as: "room" }, // Include the Rooms model
       ],
       where: {
         tenantId: tenantId,
       },
     });
-    res.status(200).json({ message: "Success", booking });
+
+    res.status(200).json({ message: "Success", bookings });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
