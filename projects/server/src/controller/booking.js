@@ -1,6 +1,47 @@
 const { ro } = require("date-fns/locale");
 const { Booking, Property, User, Payment, Rooms } = require("../models");
 
+const isPropertyAvailable = async (propertyId, startDate, endDate, roomId) => {
+  const bookings = await Booking.findAll({
+    where: {
+      propertyId,
+    },
+  });
+
+  const bookedDates = [];
+
+  bookings.forEach((booking) => {
+    if (roomId && booking.roomId !== roomId) {
+      return;
+    }
+
+    const bookingStartDate = new Date(booking.startDate);
+    const bookingEndDate = new Date(booking.endDate);
+
+    const overlap =
+      (bookingStartDate <= startDate && startDate <= bookingEndDate) ||
+      (bookingStartDate <= endDate && endDate <= bookingEndDate) ||
+      (startDate <= bookingStartDate && endDate >= bookingEndDate);
+
+    if (overlap) {
+      const dates = generateDateRange(bookingStartDate, bookingEndDate);
+
+      dates.forEach((date) => {
+        bookedDates.push(date.toISOString());
+      });
+    }
+  });
+
+  const selectedDates = generateDateRange(
+    new Date(startDate),
+    new Date(endDate)
+  );
+
+  return !selectedDates.some((date) =>
+    bookedDates.includes(date.toISOString())
+  );
+};
+
 exports.createBooking = async (req, res) => {
   const renterId = req.user.id;
   const {
@@ -26,60 +67,59 @@ exports.createBooking = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // if (renterId === tenantId) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Renter and tenant cannot be the same" });
-    // }
-
-    if ((roomId !== undefined && roomId !== null) || !roomId) {
-      const booking = await Booking.create(
-        {
-          renterId,
-          roomId,
-          tenantId,
-          propertyId,
-          startDate,
-          endDate,
-          guestCount,
-          totalPrice,
-          status: "pending payment",
-        },
-        {
-          include: [
-            { model: Property, as: "property" },
-            { model: Rooms, as: "room" },
-            { model: User, as: "renter" },
-          ],
-        }
-      );
-      res
-        .status(201)
-        .json({ message: "Booking created successfully", booking });
-    } else {
-      const booking = await Booking.create(
-        {
-          renterId,
-          tenantId,
-          propertyId,
-          startDate,
-          endDate,
-          guestCount,
-          totalPrice,
-          status: "pending payment",
-        },
-        {
-          include: [
-            { model: Property, as: "property" },
-            { model: Rooms, as: "room" },
-            { model: User, as: "renter" },
-          ],
-        }
-      );
-      res
-        .status(201)
-        .json({ message: "Booking created successfully", booking });
+    if (!startDate && !endDate) {
+      return res.status(400).json({ message: "Please select a date" });
     }
+
+    if (!guestCount) {
+      return res
+        .status(400)
+        .json({ message: "Please enter the number of guest(s)" });
+    }
+
+    if (renterId === tenantId) {
+      return res
+        .status(400)
+        .json({ message: "Renter and tenant cannot be the same" });
+    }
+
+    const isAvailable = await isPropertyAvailable(
+      propertyId,
+      startDate,
+      endDate,
+      roomId
+    );
+
+    if (!isAvailable) {
+      return res
+        .status(400)
+        .json({ message: "Property is not available for the selected dates" });
+    }
+
+    const bookingData = {
+      renterId,
+      tenantId,
+      propertyId,
+      startDate,
+      endDate,
+      guestCount,
+      totalPrice,
+      status: "pending payment",
+    };
+
+    if (roomId !== undefined && roomId !== null) {
+      bookingData.roomId = roomId;
+    }
+
+    const booking = await Booking.create(bookingData, {
+      include: [
+        { model: Property, as: "property" },
+        { model: Rooms, as: "room" },
+        { model: User, as: "renter" },
+      ],
+    });
+
+    res.status(201).json({ message: "Booking created successfully", booking });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -173,12 +213,12 @@ exports.getBookedDates = async (req, res) => {
 };
 
 exports.cancelBooking = async (req, res) => {
-  const tenantId = req.user.id;
+  const userId = req.user.id;
   const bookingId = req.params.id;
   try {
     const booking = await Booking.findByPk(bookingId);
 
-    if (!tenantId) {
+    if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -186,10 +226,10 @@ exports.cancelBooking = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    if (booking.status !== "pending confirmation") {
+    if (booking.status !== "pending payment") {
       return res
         .status(400)
-        .json({ message: "Booking is not in pending confirmation status" });
+        .json({ message: "Booking is not in pending payment status" });
     }
 
     await booking.update({

@@ -1,15 +1,19 @@
-"use client";
-
+import React, { useState, useEffect } from "react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { toast } from "sonner";
+import useFavorite from "./hooks/useFavorites";
 
-const HeartButton = ({ listingId }) => {
-  const { hasFavorited, toggleFavorite } = {
-    listingId,
+const FavoriteButton = ({ listingId, userId }) => {
+  const { toggleFavorite, hasFavorited } = useFavorite({ listingId, userId });
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+    toggleFavorite(e);
   };
 
   return (
     <div
-      onClick={toggleFavorite}
+      onClick={handleClick}
       className="relative transition cursor-pointer hover:opacity-80"
     >
       <AiOutlineHeart
@@ -29,4 +33,4 @@ const HeartButton = ({ listingId }) => {
   );
 };
 
-export default HeartButton;
+export default FavoriteButton;

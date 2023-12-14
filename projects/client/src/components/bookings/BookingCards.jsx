@@ -16,18 +16,22 @@ const BookingCards = ({
   actionId,
 }) => {
   const navigate = useNavigate();
-  const token = useSelector((state) => state.auth.token);
+  const token =
+    useSelector((state) => state.auth.token) || localStorage.getItem("token");
   const paymentModal = usePaymentModal();
 
   const onCancelBooking = async (e) => {
     e.stopPropagation();
     try {
-      const handleDelete = await api.delete(`/booking/${bookingData.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (handleDelete.status === 200) {
+      const cancelBooking = await api.patch(
+        `/booking/cancel/${bookingData.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (cancelBooking.status === 200) {
         toast.success("Bookings Successfully Cancelled");
         navigate(0);
       }

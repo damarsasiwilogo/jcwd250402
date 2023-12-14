@@ -10,6 +10,7 @@ import EditProperty from "./EditProperty";
 import BookingsPage from "./BookingsPage";
 import ReservationsPage from "./ReservationsPage";
 import CreateRoom from "./CreateRoom";
+import FavoritePage from "./FavoritePage";
 
 export {
   ResetPassword,
@@ -24,4 +25,5 @@ export {
   PageNotFound,
   CreateProperty,
   EditProperty,
+  FavoritePage,
 };

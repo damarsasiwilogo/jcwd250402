@@ -36,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
       tenantId: { type: DataTypes.INTEGER, allowNull: false },
       propertyId: { type: DataTypes.INTEGER, allowNull: false },
       roomId: DataTypes.INTEGER,
-      startDate: { type: DataTypes.DATE, allowNull: false },
-      endDate: { type: DataTypes.DATE, allowNull: false },
+      startDate: { type: DataTypes.DATE },
+      endDate: { type: DataTypes.DATE },
       guestCount: { type: DataTypes.INTEGER, allowNull: false },
       totalPrice: { type: DataTypes.INTEGER, allowNull: false },
       status: {

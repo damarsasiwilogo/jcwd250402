@@ -3,6 +3,7 @@ const JWT_SECRET_KEY = "ini_JWT_loh";
 
 exports.validateToken = (req, res, next) => {
   let token = req.headers.authorization;
+  console.log(token);
   if (!token) {
     res.status(401).json({
       ok: false,

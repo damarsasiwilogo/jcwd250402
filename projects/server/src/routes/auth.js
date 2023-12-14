@@ -13,13 +13,13 @@ router.post(
   "/register",
   authValidator.registerValidationRules,
   authValidator.applyRegisterValidation,
-  authController.handleRegister
+  authController.userRegister
 );
 
 router.post(
   "/tenant-register",
-  // authValidator.tenantRegisterRules,
-  // authValidator.applyRegisterValidation,
+  authValidator.tenantRegisterRules,
+  authValidator.applyRegisterValidation,
   multerUpload.single("file"),
   authController.tenantRegister
 );
@@ -28,8 +28,8 @@ router.post("/forgot-password", authController.forgotPassword);
 
 router.patch(
   "/reset-password/:token",
-  // authValidator.newPasswordRules,
-  // authValidator.applyRegisterValidation,
+  authValidator.newPasswordRules,
+  authValidator.applyRegisterValidation,
   authController.resetPassword
 );
 

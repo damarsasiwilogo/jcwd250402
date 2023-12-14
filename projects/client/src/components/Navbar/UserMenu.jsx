@@ -43,7 +43,7 @@ const UserMenu = () => {
           setUsersName(fullname);
         }
       } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.log(error.response.data.message);
       }
     };
     fetchUserProfile();
@@ -118,7 +118,10 @@ const UserMenu = () => {
               >
                 Bookings
               </Menu.Item>
-              <Menu.Item leftSection={<MdFavorite size={18} />}>
+              <Menu.Item
+                onClick={() => navigate("/favorites")}
+                leftSection={<MdFavorite size={18} />}
+              >
                 Favorite
               </Menu.Item>
               <Menu.Item

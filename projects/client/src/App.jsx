@@ -12,6 +12,7 @@ import {
   BookingsPage,
   ReservationsPage,
   CreateRoom,
+  FavoritePage,
 } from "./pages";
 import {
   ProtectedRoute,
@@ -58,6 +59,10 @@ function App() {
 
         <Route path="/reservations" element={<ProtectedRoute />}>
           <Route index element={<ReservationsPage />} />
+        </Route>
+
+        <Route path="/favorites" element={<ProtectedRoute />}>
+          <Route index element={<FavoritePage />} />
         </Route>
         {/* END OF USER NEEDS TO BE AUTHENTICATED */}
 

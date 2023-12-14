@@ -5,6 +5,7 @@ import BookingCards from "../components/bookings/BookingCards";
 import { Navbar, Footer, Heading, Container } from "../components";
 
 const BookingsPage = () => {
+  document.title = "Bookings";
   const bookingData = getBookingData();
   const [bookings, setBookings] = useState([]);
 
@@ -46,13 +47,7 @@ const BookingsPage = () => {
             />
             <div className="grid grid-cols-1 gap-8 pt-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 ">
               {bookings.map((booking) => {
-                return (
-                  <BookingCards
-                    key={booking.id}
-                    bookingData={booking}
-                    currentUser={booking.tenant}
-                  />
-                );
+                return <BookingCards key={booking.id} bookingData={booking} />;
               })}
             </div>
           </Container>

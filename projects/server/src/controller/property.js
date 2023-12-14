@@ -598,6 +598,16 @@ exports.getPropertyById = async (req, res) => {
           through: { attributes: [] },
         },
         {
+          model: Rooms,
+          as: "Rooms",
+          include: [
+            {
+              model: RoomImage,
+              as: "roomImages",
+            },
+          ],
+        },
+        {
           model: User,
           as: "Tenant",
           attributes: [
@@ -669,6 +679,22 @@ exports.getPropertyById = async (req, res) => {
         id: rule.id,
         rule: rule.rule,
       })),
+      Rooms: property.Rooms.map((room) => ({
+        id: room.id,
+        name: room.roomName,
+        description: room.description,
+        bedCount: room.bedCount,
+        bedroomCount: room.bedroomCount,
+        maxGuestCount: room.maxGuestCount,
+        bathroomCount: room.bathroomCount,
+        price: room.price,
+        propertyId: room.propertyId,
+        tenantId: room.userId,
+        roomImages: room.roomImages.map((image) => ({
+          id: image.id,
+          image: image.image,
+        })),
+      })),
       Owner: {
         id: property.Tenant.id,
         fullname: property.Tenant.fullname,
@@ -699,11 +725,20 @@ exports.getPropertyById = async (req, res) => {
 
 exports.deletePropertyHandler = async (req, res) => {
   const propertyId = req.params.id;
+  const tenantId = req.user.id;
   try {
     const property = await Property.findOne({
       where: { id: propertyId },
       attributes: ["id"],
     });
+
+    if (tenantId !== property.userId) {
+      return res.status(403).json({
+        ok: false,
+        status: 403,
+        message: "You are not authorized to delete this property",
+      });
+    }
 
     if (!property) {
       return res.status(404).json({
@@ -942,9 +977,6 @@ exports.deleteRoom = async (req, res) => {
         message: "Room not found",
       });
     }
-
-    console.log(room.userId);
-    console.log(tenantId);
 
     if (tenantId != room.userId) {
       return res.status(403).json({

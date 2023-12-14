@@ -3,6 +3,7 @@ import logo from "../asset/Logo-Black.svg";
 import { useNavigate } from "react-router-dom";
 
 const PageNotFound = () => {
+  document.title = "Page Not Found";
   const navigate = useNavigate();
   return (
     <div className="flex items-center justify-center h-screen">

@@ -4,7 +4,7 @@ const RoomSelect = (roomData) => {
   return (
     <div className="pb-3 border rounded">
       <div className="p-3">
-        <h1>Select the room you want to stay in?</h1>
+        <h1>Select the room you want to stay in</h1>
       </div>
 
       <div className="flex flex-row items-center justify-between px-3 py-2 border-t">

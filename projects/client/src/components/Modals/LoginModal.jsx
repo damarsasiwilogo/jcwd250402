@@ -110,6 +110,8 @@ const LoginModal = () => {
       });
       if (response.status === 200) {
         toast.success("Reset password link has been sent to your email.");
+        setIsLoading(false);
+        setIsForgotPassword(false);
       }
     } catch (error) {
       setIsLoading(false);

@@ -19,6 +19,22 @@ router.get(
   userController.getUserInfo
 );
 
+router.post(
+  "/favorite/:id",
+  authMiddleware.validateToken,
+  userController.addFavorite
+);
+router.get(
+  "/favorite",
+  authMiddleware.validateToken,
+  userController.getFavorite
+);
+router.delete(
+  "/favorite/:id",
+  authMiddleware.validateToken,
+  userController.removeFavorite
+);
+
 router.get("/tenant/:id", userController.getUserInfoById);
 
 module.exports = router;

@@ -9,13 +9,15 @@ const PropertiesDashboard = () => {
   const [propertiesData, setPropertiesData] = useState([]);
   const roomDeleteModal = useRoomDeleteModal();
   const [selectedPropertyName, setSelectedPropertyName] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const properties = await getRoomsAndPropertiesData();
         setPropertiesData(properties.Property);
+        if (properties.Property.length > 0) {
+          setSelectedPropertyName(properties.Property[0].propertyName);
+        }
       } catch (error) {
         toast.error(error.response.data.message);
       }
@@ -23,10 +25,13 @@ const PropertiesDashboard = () => {
 
     fetchData();
   }, []);
-
   const uniquePropertyNames = [
     ...new Set(propertiesData.map((property) => property.propertyName)),
   ];
+
+  const setUniquePropertyNames = (uniquePropertyNames) => {
+    setSelectedPropertyName(uniquePropertyNames[0]);
+  };
 
   const filteredProperties = propertiesData.filter(
     (property) => property.propertyName === selectedPropertyName
@@ -34,7 +39,19 @@ const PropertiesDashboard = () => {
 
   const handleSelectChange = (value) => {
     setSelectedPropertyName(value);
+    const updatedUniquePropertyNames = [
+      value,
+      ...uniquePropertyNames.filter((name) => name !== value),
+    ];
+    setUniquePropertyNames(updatedUniquePropertyNames);
   };
+
+  const priceFormatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
 
   return (
     <div className="ml-5">
@@ -88,7 +105,7 @@ const PropertiesDashboard = () => {
                   {room.maxGuestCount}
                 </td>
                 <td className="items-center justify-center px-4 py-2 text-center border-gray-200">
-                  {room.price}
+                  {priceFormatter.format(room.price)}
                 </td>
                 <td className="flex flex-row items-center justify-center px-4 py-2 border-gray-200">
                   <div className="">
@@ -108,7 +125,7 @@ const PropertiesDashboard = () => {
                             roomDeleteModal.onOpen();
                           }}
                         >
-                          Delete Property
+                          Delete Room
                         </Menu.Item>
                       </Menu.Dropdown>
                     </Menu>

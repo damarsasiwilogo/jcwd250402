@@ -12,7 +12,10 @@ const PropertyHeader = ({
 }) => {
   return (
     <>
-      <Heading title={name} subtitle={`${city}, ${province}, ${country}`} />
+      <div className="flex items-center justify-between">
+        <Heading title={name} subtitle={`${city}, ${province}, ${country}`} />
+        <FavoriteButton listingId={id} />
+      </div>
       <div className="flex flex-col md:flex-row gap-x-1">
         <div className="relative w-full h-full overflow-hidden rounded-lg md:w-1/2">
           <img
@@ -35,9 +38,6 @@ const PropertyHeader = ({
             </div>
           </div>
         )}
-        <div className="absolute top-5 right-5">
-          {/* <FavoriteButton listingId={id} currentUser={currentUser} /> */}
-        </div>
       </div>
     </>
   );

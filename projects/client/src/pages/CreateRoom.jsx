@@ -55,7 +55,6 @@ const CreateRoom = () => {
       formik.values.images.forEach((image) => {
         formData.append(`images`, image);
       });
-      console.log(formData);
       try {
         const response = await api.post(
           `/property/${propertyId}/room/create`,
@@ -113,7 +112,6 @@ const CreateRoom = () => {
     formik.setFieldValue(property, Math.max(formik.values[property] - 1, 0));
   };
 
-  console.log(formik.values);
   return (
     <div className="px-2 py-6">
       <div className="flex flex-col bg-white">

@@ -10,6 +10,7 @@ router.post(
   "/create",
   multerUpload.array("images", 5),
   authMiddleware.validateToken,
+  authMiddleware.checkTenant,
   propertyController.createProperty
 );
 
@@ -17,6 +18,7 @@ router.post(
   "/:propertyId/room/create",
   multerUpload.array("images", 5),
   authMiddleware.validateToken,
+  authMiddleware.checkTenant,
   propertyController.createRoom
 );
 
@@ -25,6 +27,7 @@ router.patch(
   "/edit/:id",
   multerUpload.array("images", 5),
   authMiddleware.validateToken,
+  authMiddleware.checkTenant,
   propertyController.editProperty
 );
 
@@ -32,12 +35,14 @@ router.patch(
 router.delete(
   "/delete/:id",
   authMiddleware.validateToken,
+  authMiddleware.checkTenant,
   propertyController.deletePropertyHandler
 );
 
 router.delete(
   "/:propertyId/room/delete/:roomId",
   authMiddleware.validateToken,
+  authMiddleware.checkTenant,
   propertyController.deleteRoom
 );
 
@@ -46,6 +51,7 @@ router.get("/", propertyController.getAllProperties);
 router.get(
   "/tenant",
   authMiddleware.validateToken,
+  authMiddleware.checkTenant,
   propertyController.getPropertiesByUserId
 );
 

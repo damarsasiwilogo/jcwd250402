@@ -21,14 +21,13 @@ const PropertiesDashboard = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await response.data.booking;
-      console.log(data);
+      const data = await response.data.bookings;
 
       if (response.status === 200) {
         setBookingData(data);
       }
     } catch (error) {
-      console.error("Error fetching properties:", error.message);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -103,6 +102,37 @@ const PropertiesDashboard = () => {
     }
   };
 
+  if (!bookingData || bookingData.length === 0)
+    return (
+      <div className="">
+        <div className="flex justify-between mb-8">
+          <h1 className="ml-2 text-3xl font-normal ">Reservations</h1>
+        </div>
+        <table className="w-full ">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border-gray-200">Status</th>
+              <th className="px-4 py-2 border-gray-200">Guest</th>
+              <th className="px-4 py-2 border-gray-200">
+                <IoPeople />
+              </th>
+              <th className="px-4 py-2 border-gray-200">Reserved</th>
+              <th className="px-4 py-2 border-gray-200">Property</th>
+              <th className="px-4 py-2 border-gray-200">Stay date</th>
+              <th className="px-4 py-2 border-gray-200">Total</th>
+              <th className="px-4 py-2 border-gray-200">Proof</th>
+              <th className="px-4 py-2 border-gray-200">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="flex items-center justify-center ">
+              <td className="px-4 py-2 border-gray-200">No data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+
   return (
     <div className="">
       <div className="flex justify-between mb-8">
@@ -124,7 +154,7 @@ const PropertiesDashboard = () => {
             <th className="px-4 py-2 border-gray-200">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="">
           {bookingData.map((booking) => (
             <tr key={booking.id} className="border-b hover:bg-primary/10">
               {/* BOOKING STATUS */}

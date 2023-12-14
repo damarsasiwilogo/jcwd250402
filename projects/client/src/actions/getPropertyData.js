@@ -39,6 +39,23 @@ export default async function getPropertyData(id) {
           isVerified: property.Owner.isVerified,
           memberSince: property.Owner.memberSince,
         },
+        Rooms: property.Rooms.map((room) => {
+          return {
+            id: room.id,
+            roomName: room.name,
+            roomDescription: room.description,
+            maxGuestCount: room.maxGuestCount,
+            bathroomCount: room.bathroomCount,
+            bedCount: room.bedCount,
+            price: room.price,
+            roomImages: room.roomImages.map((image) => {
+              return {
+                id: image.id,
+                image: image.image,
+              };
+            }),
+          };
+        }),
       };
     }
   } catch (error) {

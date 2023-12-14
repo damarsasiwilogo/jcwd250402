@@ -18,7 +18,7 @@ const Avatar = ({ width, height }) => {
           setProfilePicture(profilePicture);
         }
       } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error(error);
       }
     };
     fetchUserProfile();

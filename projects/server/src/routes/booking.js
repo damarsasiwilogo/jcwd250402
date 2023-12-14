@@ -31,7 +31,7 @@ router.patch(
 );
 
 router.patch(
-  "cancel/:id",
+  "/cancel/:id",
   authMiddleware.validateToken,
   bookingController.cancelBooking
 );
